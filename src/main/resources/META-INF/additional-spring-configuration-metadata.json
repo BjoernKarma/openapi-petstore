@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "ENVIRONMENT_NAME",
+      "type": "java.lang.String",
+      "description": "Name of the environment."
+    },
+    {
+      "name": "LOGGER_NAME",
+      "type": "java.lang.String",
+      "description": "Name and type of logger that is used. It can be CONSOLE or JSON."
+    }
+  ]
+}

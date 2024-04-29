@@ -1,0 +1,83 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    id "io.spring.dependency-management" version "1.1.4"
+    id "java"
+    id "org.springframework.boot" version "3.2.5"
+    id "org.openapi.generator" version "7.5.0"
+    id "io.freefair.lombok" version "8.6"
+    // Pipeline
+    id "jacoco"
+    id "org.sonarqube" version "5.0.0.4638"
+    id "org.owasp.dependencycheck" version "9.1.0"
+    id 'com.google.cloud.tools.jib' version '3.4.2'
+    id 'idea'
+}
+
+version = System.getenv("VERSION") ?: "0.0.1-SNAPSHOT"
+java {
+    group = 'de.openapi.petstore'
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+apply from: "gradle/scripts/openapi_generate.gradle"
+apply from: "gradle/scripts/quality_check.gradle"
+apply from: "gradle/scripts/tasks.gradle"
+
+sourceSets.main.java.srcDir files("$buildDir/generated-sources/src/main/java").builtBy("openApiGenerate")
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+javadoc.options.encoding = "UTF-8"
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed", "standard_error"
+        exceptionFormat "full"
+        showCauses true
+        showExceptions true
+        showStackTraces true
+    }
+    finalizedBy jacocoTestReport
+}
+
+dependencies {
+    //annotationProcessor "org.springframework.boot:spring-boot-de.openapi.petstore.configuration-processor"
+
+    implementation platform(SpringBootPlugin.BOM_COORDINATES)
+    // Spring Boot
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-aop"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation "org.springframework.boot:spring-boot-starter-data-mongodb"
+
+    // Open API
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0"
+    implementation "org.openapitools:jackson-databind-nullable:0.2.6"
+
+    // Logging, Monitoring and Tracing
+    implementation "io.micrometer:micrometer-registry-prometheus" // Metrics
+    implementation "io.micrometer:micrometer-tracing" // Tracer
+    implementation "io.micrometer:micrometer-tracing-bridge-brave" // Tracer Bridge
+    implementation "io.zipkin.reporter2:zipkin-reporter-brave" // Sending spans
+
+    // Utilities
+    implementation "com.google.code.findbugs:jsr305:3.0.2"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "jakarta.annotation:jakarta.annotation-api"
+
+    // Test
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "io.rest-assured:json-schema-validator"
+    testImplementation "io.rest-assured:rest-assured"
+    testImplementation "io.micrometer:micrometer-observation-test"
+    testImplementation "io.micrometer:micrometer-tracing-test"
+    testImplementation "de.bwaldvogel:mongo-java-server:1.45.0"
+}

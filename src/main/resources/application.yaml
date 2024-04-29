@@ -1,0 +1,53 @@
+# General properties
+ENVIRONMENT_NAME: dev
+LOGGER_NAME: CONSOLE
+
+spring:
+  application:
+    name: "openapi-petstore"
+  data:
+    mongodb:
+      uri: ${MONGO_DB_CONNECTION_STRING:mongodb://localhost:27017/petstoredb}
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+  zipkin:
+    tracing:
+      endpoint: ${TRACING_COLLECTOR_URL:http://localhost:8082}
+  tracing:
+    enabled: ${ENABLE_TRACING:false}
+    sampling:
+      probability: ${TRACING_SAMPLER_PROBABILITY:1.0}
+
+# Logging
+logging:
+  level:
+    de:
+      openapi:
+        petstore: INFO
+    org:
+      springframework:
+        data:
+          mongodb: INFO
+
+# Mocking
+openapi:
+  pet:
+    enabled: "mock"
+  user:
+    enabled: "mock"
+  order:
+    enabled: "mock"

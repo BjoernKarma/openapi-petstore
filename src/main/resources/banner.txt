@@ -1,0 +1,17 @@
+ [36m
+  ______        _______    ____          _           _
+ / ___\ \      / / ____|  / ___|___   __| | ___  ___| |__   __ _ _ __ ___
+ \___ \\ \ /\ / /|  _|   | |   / _ \ / _` |/ _ \/ __| '_ \ / _` | '__/ _ \
+  ___) |\ V  V / | |___  | |__| (_) | (_| |  __/\__ \ | | | (_| | | |  __/
+ |____/  \_/\_/  |_____|  \____\___/ \__,_|\___||___/_| |_|\__,_|_|  \___|
+
+ [33mThis is the way!
+
+ [32mJava Version        : [31m${java.vendor.version:???}
+ [32mSpring Boot Version : [31m${spring-boot.version:???}
+ [32mActive Profiles     : [31m${spring.profiles.active:???}
+ [32mServer Port         : [34m${server.port:???}
+ [32mManagement Port     : [34m${management.server.port:???}
+ [32mApplication Version : [34m${application.version:???}
+ [32mApplication Title   : [34m${application.title:???}
+ [0m
