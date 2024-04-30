@@ -1,0 +1,7 @@
+// Create a task to start the MongoH2StandaloneApplication
+task runMongoH2StandaloneApplication(type: JavaExec) {
+    group = "mocks"
+    description = "Run the MongoH2StandaloneApplication with JavaExec"
+    classpath = sourceSets.test.runtimeClasspath
+    setMainClass("de.openapi.petstore.MongoH2StandaloneApplication")
+}

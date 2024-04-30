@@ -1,0 +1,20 @@
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$projectDir/src/main/resources/openapi.yaml"
+    outputDir = "$buildDir/generated-sources"
+    apiPackage = "${project.group}.api"
+    modelPackage = "${project.group}.model"
+    generateModelDocumentation = false
+    generateApiDocumentation = false
+    generateModelTests = false
+    generateApiTests = false
+    configOptions = [
+            dateLibrary         : "java8",
+            interfaceOnly       : "true",
+            serializableModel   : "true",
+            skipDefaultInterface: "true",
+            useSpringBoot3      : "true"
+    ]
+}
+
+compileJava.dependsOn("openApiGenerate")

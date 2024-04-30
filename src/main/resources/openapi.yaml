@@ -1,0 +1,661 @@
+openapi: 3.0.2
+servers:
+  - url: http://localhost:8080/api/petstore/v1
+info:
+  title: OpenAPI Petstore
+  description: This is a sample server Petstore server. For this sample, you can use the api key `special-key` to test the authorization filters. For OAuth2 flow, you may use `user` as both username and password when asked to login.
+  license:
+    name: Apache-2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about OpenAPI generator
+  url: https://openapi-generator.tech
+tags:
+- name: pet
+  description: Everything about your Pets
+- name: store
+  description: Access to Petstore orders
+- name: user
+  description: Operations about user
+paths:
+  /pet:
+    post:
+      tags:
+        - pet
+      summary: Add a new pet to the store
+      description: Add a new pet to the store
+      operationId: addPet
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '405':
+          description: Invalid input
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: Create a new pet in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+    put:
+      tags:
+        - pet
+      summary: Update an existing pet
+      description: Update an existing pet by Id
+      operationId: updatePet
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+      parameters:
+        - name: X-Session-ID
+          in: header
+          schema:
+            type: string
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: Update an existent pet in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+  /pet/findByStatus:
+    get:
+      tags:
+        - pet
+      summary: Finds Pets by status
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findPetsByStatus
+      parameters:
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: false
+          explode: true
+          schema:
+            type: string
+            enum:
+              - available
+              - pending
+              - sold
+            default: available
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid status value
+      security:
+        - bearerAuth: [ ]
+  '/pet/{petId}':
+    get:
+      tags:
+        - pet
+      summary: Find pet by ID
+      description: Returns a single pet
+      operationId: getPetById
+      parameters:
+        - name: petId
+          in: path
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+      security:
+        - bearerAuth: [ ]
+    delete:
+      tags:
+        - pet
+      summary: Deletes a pet
+      description: ''
+      operationId: deletePet
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: petId
+          in: path
+          description: Pet id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid pet value
+      security:
+        - bearerAuth: [ ]
+  /store/inventory:
+    get:
+      tags:
+        - store
+      summary: Returns pet inventories by status
+      description: Returns a map of status codes to quantities
+      operationId: getInventory
+      x-swagger-router-controller: OrderController
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+                  format: int32
+      security:
+        - bearerAuth: [ ]
+  /store/order/findByStatus:
+    get:
+      tags:
+        - store
+      summary: Finds Order by status
+      description: Multiple status values can be provided with comma separated strings
+      operationId: findOrdersByStatus
+      parameters:
+        - name: status
+          in: query
+          description: Status values that need to be considered for filter
+          required: false
+          explode: true
+          schema:
+            type: string
+            enum:
+              - placed
+              - approved
+              - delivered
+            default: placed
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid status value
+      security:
+        - bearerAuth: [ ]
+  /store/order:
+    post:
+      tags:
+        - store
+      summary: Place an order for a pet
+      description: Place a new order in the store
+      operationId: placeOrder
+      x-swagger-router-controller: OrderController
+      parameters:
+        - name: X-Session-ID
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '405':
+          description: Invalid input
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+  '/store/order/{orderId}':
+    get:
+      tags:
+        - store
+      summary: Find purchase order by ID
+      x-swagger-router-controller: OrderController
+      description: >-
+        For valid response try integer IDs with value <= 5 or > 10. Other values
+        will generate exceptions.
+      operationId: getOrderById
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of order that needs to be fetched
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Order not found
+    delete:
+      tags:
+        - store
+      summary: Delete purchase order by ID
+      x-swagger-router-controller: OrderController
+      description: >-
+        For valid response try integer IDs with value < 1000. Anything above
+        1000 or nonintegers will generate API errors
+      operationId: deleteOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: ID of the order that needs to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Order not found
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Created user object
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid username/password supplied
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      parameters:
+        - name: X-Session-ID
+          in: header
+          schema:
+            type: string
+      responses:
+        default:
+          description: successful operation
+  '/user/{username}':
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Update user
+      x-swagger-router-controller: UserController
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: successful operation
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+  /session/user/{username}:
+    post:
+      tags:
+        - session
+      summary: Create session
+      description: Start a user session and retrieve session id
+      operationId: createSession
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs a session
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+  /session/{id}:
+    get:
+      tags:
+        - session
+      summary: read session
+      operationId: getSession
+      parameters:
+        - name: id
+          in: path
+          description: The session id to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          description: Invalid session-id supplied
+        '404':
+          description: Session-id not found
+    delete:
+      tags:
+        - session
+      summary: Delete session
+      description: This can only be done by the logged in user.
+      operationId: deleteSession
+      parameters:
+        - name: id
+          in: path
+          description: The session id to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+components:
+  schemas:
+    Order:
+      x-swagger-router-model: io.swagger.petstore.model.Order
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        petId:
+          type: integer
+          format: int64
+          example: 198772
+        quantity:
+          type: integer
+          format: int32
+          example: 7
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+            - placed
+            - approved
+            - delivered
+          example: approved
+        complete:
+          type: boolean
+      xml:
+        name: order
+      type: object
+    Category:
+      x-swagger-router-model: io.swagger.petstore.model.Category
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Dogs
+      xml:
+        name: category
+      type: object
+    User:
+      x-swagger-router-model: io.swagger.petstore.model.User
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        username:
+          type: string
+          example: theUser
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: 12345
+        phone:
+          type: string
+          example: 12345
+        userStatus:
+          type: integer
+          format: int32
+          example: 1
+          description: User Status
+      xml:
+        name: user
+      type: object
+    Tag:
+      x-swagger-router-model: io.swagger.petstore.model.Tag
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: tag
+      type: object
+    Pet:
+      x-swagger-router-model: io.swagger.petstore.model.Pet
+      required:
+        - name
+        - photoUrls
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        name:
+          type: string
+          example: doggie
+        category:
+          $ref: '#/components/schemas/Category'
+        photoUrls:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            type: string
+            xml:
+              name: photoUrl
+        tags:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Tag'
+            xml:
+              name: tag
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - available
+            - pending
+            - sold
+      xml:
+        name: pet
+      type: object
+    Session:
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        expireAt:
+          type: string
+          format: date-time
+      type: object
+  requestBodies:
+    Pet:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+      description: Pet object that needs to be added to the store
+    UserArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+      description: List of user object
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
