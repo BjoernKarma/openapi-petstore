@@ -47,7 +47,7 @@ test {
 }
 
 dependencies {
-    //annotationProcessor "org.springframework.boot:spring-boot-de.openapi.petstore.configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     implementation platform(SpringBootPlugin.BOM_COORDINATES)
     // Spring Boot
