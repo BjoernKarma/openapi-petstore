@@ -5,20 +5,24 @@ plugins {
     id "java"
     id "org.springframework.boot" version "3.3.2"
     id "org.openapi.generator" version "7.8.0"
-    id "io.freefair.lombok" version "8.7.1"
+    id "io.freefair.lombok" version "8.10"
     // Pipeline
     id "jacoco"
     id "org.sonarqube" version "5.1.0.4882"
-    id "org.owasp.dependencycheck" version "10.0.3"
+    id "org.owasp.dependencycheck" version "9.2.0"
+    id 'org.cyclonedx.bom' version '1.10.0'
     id 'com.google.cloud.tools.jib' version '3.4.3'
     id 'idea'
+    id 'maven-publish'
 }
 
-version = System.getenv("VERSION") ?: "0.0.1-SNAPSHOT"
+version = System.getenv("VERSION") ?: "snapshot-main"
 java {
     group = 'de.openapi.petstore'
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+    withJavadocJar()
+    withSourcesJar()
 }
 
 apply from: "gradle/scripts/openapi_generate.gradle"
@@ -79,5 +83,6 @@ dependencies {
     testImplementation "io.rest-assured:rest-assured"
     testImplementation "io.micrometer:micrometer-observation-test"
     testImplementation "io.micrometer:micrometer-tracing-test"
-    testImplementation "de.bwaldvogel:mongo-java-server:1.45.0"
+    // TODO: Uses implementation only for testing purposes, because no Mongo DBaaS is available
+    implementation "de.bwaldvogel:mongo-java-server:1.45.0"
 }
