@@ -84,5 +84,5 @@ dependencies {
     testImplementation "io.micrometer:micrometer-observation-test"
     testImplementation "io.micrometer:micrometer-tracing-test"
     // TODO: Uses implementation only for testing purposes, because no Mongo DBaaS is available
-    implementation "de.bwaldvogel:mongo-java-server:1.45.0"
+    implementation "de.bwaldvogel:mongo-java-server:1.46.0"
 }
