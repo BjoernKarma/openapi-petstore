@@ -5,7 +5,7 @@ plugins {
     id "java"
     id "org.springframework.boot" version "3.5.6"
     id "org.openapi.generator" version "7.15.0"
-    id "io.freefair.lombok" version "8.14.2"
+    id "io.freefair.lombok" version "9.0.0"
     // Pipeline
     id "jacoco"
     id "org.sonarqube" version "6.3.1.5724"
