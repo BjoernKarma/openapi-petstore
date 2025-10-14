@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import java.util.Date;
 
+import jakarta.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class UserApiController implements UserApi {
   }
 
   public ResponseEntity<Void> deleteUser(
-      @Parameter(name = "username", description = "The name that needs to be deleted", required = true, schema = @Schema(description = "")) @PathVariable("username") String username) {
+      @NotNull @Parameter(name = "username", description = "The name that needs to be deleted", required = true, schema = @Schema(description = "")) @PathVariable("username") String username) {
 
     LOGGER.info("Hello from demo-petstore-service!\nThis log message was produced at {}#deleteUser",
         getClass().getCanonicalName());
@@ -74,7 +75,7 @@ public class UserApiController implements UserApi {
   }
 
   public ResponseEntity<User> getUserByName(
-      @Parameter(name = "username", description = "The name that needs to be fetched. Use user1 for testing. ", required = true, schema = @Schema(description = "")) @PathVariable("username") String username) {
+      @NotNull @Parameter(name = "username", description = "The name that needs to be fetched. Use user1 for testing. ", required = true, schema = @Schema(description = "")) @PathVariable("username") String username) {
 
     LOGGER.info(
         "Hello from demo-petstore-service!\nThis log message was produced at {}#getUserByName",
@@ -129,7 +130,7 @@ public class UserApiController implements UserApi {
   }
 
   public ResponseEntity<Void> updateUser(
-      @Parameter(name = "username", description = "name that need to be deleted", required = true, schema = @Schema(description = "")) @PathVariable("username") String username,
+      @NotNull @Parameter(name = "username", description = "name that need to be deleted", required = true, schema = @Schema(description = "")) @PathVariable("username") String username,
       @Parameter(name = "User", description = "Update an existent user in the store", schema = @Schema(description = "")) @Valid @RequestBody(required = false) User user) {
 
     LOGGER.info("Hello from demo-petstore-service!\nThis log message was produced at {}#updateUser",
