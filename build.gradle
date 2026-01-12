@@ -9,7 +9,7 @@ plugins {
     // Pipeline
     id "jacoco"
     id "org.sonarqube" version "7.2.2.6593"
-    id "org.owasp.dependencycheck" version "12.1.9"
+    id "org.owasp.dependencycheck" version "12.2.0"
     id 'org.cyclonedx.bom' version '3.1.0'
     id 'com.google.cloud.tools.jib' version '3.5.2'
     id 'idea'
